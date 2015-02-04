@@ -41,8 +41,7 @@
 
 			ctx.drawImage(pressed ? DATA.pressed : DATA.normal, 0, 0);
 
-			node.innerHTML = "";
-			node.appendChild(canvas);
+			node.style.backgroundImage = "url(" + canvas.toDataURL() + ")";
 		}
 
 		var play = function(node) {
@@ -72,7 +71,28 @@
 		var updateSrc = function(node, src) {
 			var audio = null;
 			if (src) {
-				audio = new Audio(src);
+				audio = new Audio();
+				var r = src.match(/\{(.*?)\}/);
+				if (r) {
+					var mimeMap = {
+						"mp3": "audio/mpeg",
+						"ogg": "audio/ogg"
+					}
+					var rank = {
+						"probably": 2,
+						"maybe": 1,
+						"": 0
+					}
+					var extensions = r[1].split(",").map(function(ext) {
+						return {ext:ext, rank: rank[audio.canPlayType(mimeMap[ext])]};
+					});
+					extensions.sort(function(a, b) {
+						return b.rank-a.rank;
+					});
+					audio.src = src.replace(r[0], extensions[0].ext);
+				} else {
+					audio.src = src;
+				}
 			}
 			node._audio = audio;
 		}
