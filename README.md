@@ -33,7 +33,7 @@ bower install instant-button [--save]
 
 
 ## Example
-http://ondras.github.io/instant-button/example/
+http://ondras.github.io/instant-button/
 
 
 ## Awesome!
