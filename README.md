@@ -8,7 +8,7 @@ bower install instant-button [--save]
 ## Include
 ```html
 <!-- Web Components polyfills -->
-<script src="//polymer-project.org/platform.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.5.2/webcomponents-lite.min.js"></script>
 
 <!-- fix-me and to-do elements -->
 <link rel="import" href="bower_components/instant-button/instant-button.html" />
