@@ -10,7 +10,7 @@ bower install instant-button [--save]
 <!-- Web Components polyfills -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.5.2/webcomponents-lite.min.js"></script>
 
-<!-- fix-me and to-do elements -->
+<!-- instant-button custom element -->
 <link rel="import" href="bower_components/instant-button/instant-button.html" />
 ```
 
