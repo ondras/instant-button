@@ -13,6 +13,9 @@
 
 <script>
 	(function() {
+		var queue = []; /* list of instances created before we loaded the image */
+		var imageLoadLock = 0;
+
 		var reflectAttribute = function(prototype, attributeName, propertyName) {
 			Object.defineProperty(prototype, propertyName || attributeName, {
 				get: function() {
@@ -111,8 +114,12 @@
 		}
 
 		proto.createdCallback = function() {
-			updateColor(this, this.getAttribute("color"));
-			updateSrc(this, this.getAttribute("src"));
+			if (imageLoadLock) {
+				queue.push(this);
+			} else {
+				updateColor(this, this.getAttribute("color"));
+				updateSrc(this, this.getAttribute("src"));
+			}
 		};
 
 		proto.attachedCallback = function() {
@@ -149,8 +156,15 @@
 			shadow: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABZCAYAAAC315PWAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gYOFgkod6OZHQAACJpJREFUeNrtnel26joMhRWbBOh4et7/GQ9DSwmQ4f64UrsjlBBCIGmx1/JyaEOHzxtZthU5onGWCFrHrVzXlZLbgmsJXyvH+g+O4W/wRDQhoti49nBPXRHYBRHlXDOoB27LMXRENODvdQxyyjVh0DFfO4DulfottUvNQPUCfw/tnohS7oh8qE9ENMDv80T0QEQzBj5ndSf8WtQ+AeiTFqam4DY3FJ8D/B3XlNsttzf9JNwKvGMlzxj6IwOPoUXFo7kR+K6FjS9rwB+47qFKB2wY/ie/zm/RAdGNgD8y8AcGLe2Mvy+mJgH1T5SpcSdsfJN9zxR0MTcpQxfwn9wR6bU7ILriz40Z8BODF5XPAf4MoE8N8DEAj1oqXuw7AhfF75TaPxm6dMAG4H9AB/ReJlf4mR6APwH4BwVcOmKqBli0766lOCLDRpfQAblhYlIwMykDf+CviTg+uO76Vn/fip8y6Jca8NrUPPF7BLa242VP/x9+EsSt3IDKdbsB1b8T0Zq/l41N8RHDfWboz1wFOsJ/BNUnMDnqCzbV/CwHA3bJHZ/y3/YJsHH8QTO45k7Y9WUW+ui8FyL6Q0RvRPSXr+X1H+O1eDLRQHMJGS8mYO4sjyo2Bvi8D7t/KfiYQf5VYF8N8G+splNu4RAdEMMnMFYDu1PXHkzWIOCnBtg3dS31cWCFn+P6To2Zs1ODvYdZcnlL8FPDhFjQX/heRz+jyCcAPSyn1I4z8II9pfIW4OcKsjY1Up97GkOGgB+BvUfXlpSLK+3hXPjngpnVDKIa+nzEJuUcjwgncziBk+uSr89Wvu9gXt5qFC/X04FXPvue4zi1hGHNEWQC1xp+W/CxAV2/fv1F0OuWQHzNeIUTtH1f4D0Pkm8MV3ssf/n7CY1wp+dK8CO1PoS7X1kbV9O3+GVPDW4iei6/GTqWBFRfwP8tq5k5rA91Bv9gzD71xCi5I+gRmF4NH1dH81P23p+w66/GQIp1dkfQLbMTAWi9H3BoMjm+4Qc/G3Ydzc2M7rtE9L3IiMClFvS9o9Ua/LzBxMgSQEShOFg+0OBlI8Zcy/cNXsyfmoWul5GvuQwB31E1qgHB7y2T42tmp00DahKgm+s7RNWohgNVtxzLJvDOAK6XdQP0epODEQ0Y4ZCS2r1yxrIAbs/pXaMAvb5MqLqxr/eZXR14R9UIALmWrTsfwJ8sM6pubc6AZ9wEfqbegFEBPnBt5V6iynH/dobCdWoqLPuPc3iDhNiVgW0r+DMQ61xVp8FHfPOUqrEuc91TobRSvSh8Cu0UJlxf4GXBP4Gb5M2TwLN1KUH1CHyqzY2DdRkMlcYOCLa92zoOgkdRH4HH+EW82QWWZxeM+4+hlZ2sr+kuxpMk+qZQOqs+MXh+gZcBIVZV1B68mW4zWc20snHu4CZ8EEBuDGbmspksQp/ANWnw+jGY4EZervqJEvKEDOie7HDpULq5lRj6V+HrqPo0nY4TDOUyxevnt76ebnEA3RkdEEzN5W6lU2xJwGvoLkDv3bXUZifCtRq8KZT+oON4aa5OhnLjASCUAcHrxxRHkWjhl7iVEsxa4ezgG1gD9H7hY5RZQUSFM1SON4QOuKzkhqBLVLwOPcvh4xFKt1IopgI+F8Xr/C55AN+LG6mtRyV8WxSf0XHsXx74Xax4nR1KvlY644aDujGU7vYdI8oq6blkoyMzbtjzm8NMtpvaD4aQpf0yNXvjRkklFTybbi4kJiU6QJvhBArTRu3UGwL4bmYGWe6UmL/A400HeH21DEW/XO06GxSKukTw2EMCXGoWWJ7lRhJVs/ztlJBLvVazNd6Q0hXSQt2B2rfALoXrDNdqSPUSZqaT7HSHwLQ1eMlvtoVWamGBL6CndFrANPj0raBnBmzkWTaBxzSAmKsruJanCyaT0x1QsRp6IwQzj+okmNsAvrFkCrq+rlgMb3xcSjpONytBOSFsu95v/yCiJRGtoMrrDZ146k/gOwO6BONIqHFYSqhaiiVUDf8olUodeKLv8DMd3icBrQH896x/ZUCX1xtq+WS3fHScAV/C+8QU3Xsp6P8koEsiWhjgV3UTUH/CbnmyM1pjuqh7dh83RPQPIC/V9bbuzW2OftBBlxiSFt8x/E9Q+VKpfMmDbdEFPIHvjsdFYBXl+ztSecTQUeFroxMaZ/ttgOVUDUXTEcbRncC3oC+M6wXPVOlS8AUMtlrxOBGTQbi8A+h1JmbBdp/6AC+qzw3g8rqg7/DuCfyhv82mr5TC1zC4Lk7Z9S7gxd7nAFxaDIQi8PV/OnzMoroBlf9j+Gu4XrBb2XrT6Fy7rBfK9OliJXRI/MPBRzxAvoNZWYDq/0F7FvQu4GWmlqlZbgFtAWbJ/9BBV9bVtf1eGzZ+TR22R7tCEbNTGn6/jkZDb+gnAM9gwWtpeC/LS6HThWqUOBF9uKE+7i2HucBYF9dkjPoE07KqWXtZAfTOm0OXmgGMltIJL62DsKjGHR1yrUXyQ743wF4qb+bjUrfZ9/THS1hITs2nj0mwVDFgJ+DRdFsFvE7p2G77+CN8j/+MjrnEQFiMTtPXuhNcj50RKZdXEnBu2FRI1WvoK8Nnf6eWKcrblEnPSkrhn8PYnAdWik42J+m48MyluGZtqIuqCzrOAYlHzO3pOCJAH8AlR8+N+uQz/LkJVY+e09n9MP2WZDDSp1zi+RznnG6JwPE4UQws2qqOEMACfENXDOi6xemWCdlHzskebt1Bi/oArHOPFcXoXAyp29NxoNFWqT2lK0dV3GpQ81Q9z3WmTE2iqrXtKLVssaZkxfzroFyEL2ZmRzcKYxniBGMxIaJ8nULK0/cys1b8qfNc9WMv+GAARkAj8B04BL/uBOM6M4RhIzp/11GqkRaz37xG9RgFLeblQAM+2TiWWSQuKceq9YaX0zT7tBS/h06461Pq2/rfeuerzR4xPqM72qfU/wNUXesjekUwPQAAAABJRU5ErkJggg=="
 		};
 
+		var onLoad = function() {
+			imageLoadLock--;
+			if (imageLoadLock) { return; }
+			while (queue.length) { queue.pop().createdCallback(); }
+		}
 		for (var p in DATA) {
+			imageLoadLock++;
 			var img = document.createElement("img");
+			img.onload = onLoad;
 			img.src = DATA[p];
 			DATA[p] = img;
 		}
