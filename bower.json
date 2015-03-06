@@ -8,6 +8,7 @@
   "description": "<instant-button> web component",
   "main": "instant-button.html",
   "keywords": [
+    "web-components",
     "web",
     "components",
     "instant",
