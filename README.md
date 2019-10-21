@@ -2,27 +2,19 @@
 
 ## Install
 ```
-bower install instant-button [--save]
+FIXME
 ```
 
 ## Include
 ```html
-<!-- Web Components polyfills -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.5.2/webcomponents-lite.min.js"></script>
-
-<!-- instant-button custom element -->
-<link rel="import" href="bower_components/instant-button/instant-button.html" />
+FIXME
 ```
 
 ## Use
 ```html
-<!-- random color -->
-<instant-button></instant-button>
-<instant-button color="random"></instant-button>
-
 <!-- specified color -->
-<instant-button color="#faf"></instant-button>
-<instant-button color="gold"></instant-button>
+<instant-button style="color:#faf"></instant-button>
+<instant-button style="color:gold"></instant-button>
 
 <!-- sound file url -->
 <instant-button src="sound.ogg"></instant-button>
@@ -37,4 +29,4 @@ http://ondras.github.io/instant-button/
 
 
 ## Awesome!
-Built with love (and caribbean rum) by [Ondřej Žára](http://ondras.zarovi.cz/)
+Built with love (and caribbean rum) by [Ondřej Žára](https://ondras.zarovi.cz/)
