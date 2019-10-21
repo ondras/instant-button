@@ -1,0 +1,18 @@
+{
+  "name": "@ondras/instant-button",
+  "version": "1.0.0",
+  "main": "instant-button.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ondras/instant-button.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ondras/instant-button/issues"
+  },
+  "homepage": "https://github.com/ondras/instant-button#readme",
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com/"
+  }
+}

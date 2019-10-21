@@ -1,13 +1,14 @@
 # &lt;instant-button&gt;
 
 ## Install
-```
-FIXME
+```bash
+npm i @ondras/instant-button --registry https://npm.pkg.github.com
 ```
 
 ## Include
 ```html
-FIXME
+<link rel="stylesheet" href="node_modules/@ondras/instant-button/instant-button.css" />
+<script type="module"   src="node_modules/@ondras/instant-button/instant-button.js"></script>
 ```
 
 ## Use
