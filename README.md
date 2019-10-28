@@ -26,7 +26,7 @@ npm i @ondras/instant-button --registry https://npm.pkg.github.com
 
 
 ## Example
-http://ondras.github.io/instant-button/
+https://ondras.github.io/instant-button/
 
 
 ## Awesome!
